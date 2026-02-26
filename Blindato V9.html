@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Blindato SuperApp | v9.0 Gold</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        blindato: {
+                            dark: '#0f172a',
+                            card: '#1e293b',
+                            gold: '#d4af37',
+                            accent: '#3b82f6',
+                            success: '#10b981',
+                            danger: '#ef4444',
+                        }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .hidden-screen { display: none !important; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .toggle-checkbox:checked { right: 0; border-color: #d4af37; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #d4af37; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 h-screen flex flex-col items-center justify-center overflow-hidden">
+
+    <div class="absolute top-4 left-4 z-50 bg-white/90 backdrop-blur p-2 rounded-lg shadow-lg border border-gray-200 text-xs hidden md:block">
+        <p class="font-bold mb-1 text-gray-500 uppercase">Menú Rápido:</p>
+        <button onclick="router('login')" class="block w-full text-left px-2 py-1 hover:bg-gray-100 rounded">🔄 Reiniciar</button>
+        <button onclick="router('dashboard-tenant')" class="block w-full text-left px-2 py-1 hover:bg-gray-100 rounded text-blue-600">🏠 Home</button>
+    </div>
+
+    <div class="relative w-full h-full md:w-[375px] md:h-[812px] bg-blindato-dark md:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col md:border-[8px] md:border-gray-900 ring-1 ring-white/10">
+        
+        <div class="h-12 w-full flex justify-between items-end px-6 pb-2 text-white text-[10px] z-20 absolute top-0 pointer-events-none">
+            <span>10:45</span>
+            <div class="flex gap-1"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-full"></i></div>
+        </div>
+
+        <div id="screen-login" class="screen flex-1 flex flex-col justify-center px-8 bg-blindato-dark fade-in pt-12">
+            <div class="mb-6 text-center">
+                <i class="fas fa-shield-alt text-6xl text-blindato-gold mb-4 animate-pulse"></i>
+                <h1 class="text-3xl font-extrabold text-white tracking-tighter">BLINDATO</h1>
+                <p class="text-gray-400 text-xs mt-2">Seguridad en Alquileres</p>
+            </div>
+            
+            <div class="flex bg-gray-800 rounded-lg p-1 mb-6">
+                <button onclick="toggleAuth('login')" id="tab-login" class="flex-1 py-2 text-xs font-bold rounded bg-blindato-gold text-black transition">Ingresar</button>
+                <button onclick="toggleAuth('register')" id="tab-register" class="flex-1 py-2 text-xs font-bold rounded text-gray-400 hover:text-white transition">Crear Cuenta</button>
+            </div>
+
+            <div id="form-login">
+                <div class="flex gap-3 mb-6">
+                    <button class="flex-1 bg-white text-black py-2 rounded-lg font-bold text-xs flex items-center justify-center gap-2 hover:bg-gray-200 transition"><i class="fab fa-google"></i> Google</button>
+                    <button class="flex-1 bg-white text-black py-2 rounded-lg font-bold text-xs flex items-center justify-center gap-2 hover:bg-gray-200 transition"><i class="fab fa-apple text-lg"></i> Apple</button>
+                </div>
+                
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="h-px bg-gray-700 flex-1"></div><span class="text-gray-500 text-[10px]">O CON EMAIL</span><div class="h-px bg-gray-700 flex-1"></div>
+                </div>
+
+                <div class="bg-white/5 rounded-xl p-4 border border-white/10 mb-4">
+                    <input type="email" placeholder="Email" class="w-full bg-transparent border-b border-gray-600 text-white p-2 mb-3 text-sm focus:outline-none focus:border-blindato-gold" value="rmartinez.arg@gmail.com">
+                    <input type="password" placeholder="Contraseña" class="w-full bg-transparent border-b border-gray-600 text-white p-2 text-sm focus:outline-none focus:border-blindato-gold" value="******">
+                </div>
+                
+                <div class="text-right mb-4">
+                    <span onclick="alert('Se envió un link de reseteo a su email.')" class="text-gray-400 text-xs hover:text-white cursor-pointer underline">¿Olvidaste tu contraseña?</span>
+                </div>
+
+                <button onclick="router('dashboard-tenant')" class="w-full bg-white text-blindato-dark font-bold py-3 rounded-xl hover:bg-gray-200 transition">Entrar</button>
+            </div>
+
+            <div id="form-register" class="hidden">
+                 <div class="flex gap-3 mb-6">
+                    <button class="flex-1 bg-white text-black py-2 rounded-lg font-bold text-xs flex items-center justify-center gap-2"><i class="fab fa-google"></i> Google</button>
+                    <button class="flex-1 bg-white text-black py-2 rounded-lg font-bold text-xs flex items-center justify-center gap-2"><i class="fab fa-apple text-lg"></i> Apple</button>
+                </div>
+
+                <div class="bg-white/5 rounded-xl p-4 border border-white/10 mb-6 relative">
+                    <div class="relative mb-3">
+                        <input type="email" id="reg-email" placeholder="Tu Email" class="w-full bg-transparent border-b border-gray-600 text-white p-2 text-sm focus:outline-none focus:border-blindato-gold" oninput="validateEmail()">
+                        <i id="email-check" class="fas fa-check-circle text-green-500 absolute right-2 top-2 hidden"></i>
+                        <p id="email-error" class="text-red-500 text-[10px] hidden mt-1">Formato inválido</p>
+                    </div>
+                    <input type="password" placeholder="Crear Contraseña" class="w-full bg-transparent border-b border-gray-600 text-white p-2 mb-3 text-sm focus:outline-none focus:border-blindato-gold">
+                    <input type="password" placeholder="Repetir Contraseña" class="w-full bg-transparent border-b border-gray-600 text-white p-2 text-sm focus:outline-none focus:border-blindato-gold">
+                </div>
+                <button onclick="router('register-role')" class="w-full bg-blindato-gold text-black font-bold py-3 rounded-xl shadow-lg hover:scale-105 transition">Continuar</button>
+            </div>
+        </div>
+
+        <div id="screen-register-role" class="screen hidden-screen flex-1 flex flex-col bg-blindato-dark fade-in pt-12">
+            <div class="px-6 mb-6">
+                <button onclick="router('login')" class="text-gray-400 mb-4 text-xs"><i class="fas fa-arrow-left"></i> Volver</button>
+                <h2 class="text-white text-2xl font-bold">Elige tu Perfil</h2>
+            </div>
+            <div class="px-6 space-y-4">
+                <button onclick="router('agency-link')" class="w-full bg-gray-800 p-4 rounded-xl border border-blindato-gold shadow-[0_0_15px_rgba(212,175,55,0.2)] flex items-center gap-4 text-left hover:scale-105 transition">
+                    <div class="w-12 h-12 bg-blue-900 rounded-full flex items-center justify-center text-white"><i class="fas fa-user"></i></div>
+                    <div><h3 class="text-white font-bold">Soy Inquilino</h3><p class="text-gray-400 text-xs">Pagar alquiler y gestionar.</p></div>
+                </button>
+                <button class="w-full bg-gray-800 p-4 rounded-xl border border-gray-700 flex items-center gap-4 text-left opacity-80 hover:opacity-100 transition">
+                    <div class="w-12 h-12 bg-green-900 rounded-full flex items-center justify-center text-white"><i class="fas fa-key"></i></div>
+                    <div><h3 class="text-white font-bold">Soy Propietario</h3><p class="text-gray-400 text-xs">Monitorear mis rentas.</p></div>
+                </button>
+                <button class="w-full bg-gray-800 p-4 rounded-xl border border-gray-700 flex items-center gap-4 text-left opacity-80 hover:opacity-100 transition">
+                    <div class="w-12 h-12 bg-purple-900 rounded-full flex items-center justify-center text-white"><i class="fas fa-building"></i></div>
+                    <div><h3 class="text-white font-bold">Soy Inmobiliaria</h3><p class="text-gray-400 text-xs">Administrador de cartera.</p></div>
+                </button>
+            </div>
+        </div>
+
+        <div id="screen-agency-link" class="screen hidden-screen flex-1 flex flex-col bg-black fade-in relative">
+            <div class="flex-1 relative flex flex-col items-center justify-center">
+                <img src="https://images.unsplash.com/photo-1555617778-02518510b9fa?q=80&w=600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-50 grayscale" alt="Camera">
+                <div class="relative z-10 w-64 h-64 border-4 border-blindato-gold rounded-3xl flex flex-col items-center justify-center bg-transparent shadow-[0_0_0_9999px_rgba(0,0,0,0.85)]">
+                    <div class="w-full h-1 bg-red-500 absolute top-0 animate-[ping_1.5s_infinite]"></div>
+                    <p class="text-white text-xs font-bold mt-32 bg-black/50 px-3 py-1 rounded">Escanee QR de Inmobiliaria</p>
+                </div>
+                <p class="relative z-20 text-white bg-red-500/80 px-4 py-2 rounded-lg text-xs font-bold mt-6 shadow-lg border border-red-400">
+                    <i class="fas fa-info-circle mr-1"></i> ¿No tiene código? Solicítelo a su Inmobiliaria.
+                </p>
+            </div>
+            <div class="bg-black p-6 pb-10 w-full flex flex-col gap-3 z-20 rounded-t-3xl border-t border-gray-800">
+                <button onclick="router('kyc-dni')" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl border border-gray-600 flex items-center justify-center gap-2 hover:bg-gray-700">
+                    <i class="fas fa-image"></i> Cargar QR de Galería
+                </button>
+            </div>
+            <button onclick="router('register-role')" class="absolute top-12 left-6 text-white text-sm z-30"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div id="screen-kyc-dni" class="screen hidden-screen flex-1 flex flex-col bg-black fade-in relative">
+            <div class="flex-1 relative flex flex-col items-center justify-center">
+                <p class="absolute top-20 text-white font-bold z-20">Paso 1: Documentación</p>
+                <img src="https://images.unsplash.com/photo-1544502062-f82884f03df6?q=80&w=600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-40 grayscale">
+                <div class="relative z-10 w-72 h-44 border-2 border-white rounded-xl flex items-center justify-center"><p class="text-white text-xs bg-black/50 px-2 rounded">Encuadre Frente DNI</p></div>
+            </div>
+            <div class="h-24 bg-black flex items-center justify-center z-20 pb-6">
+                <button onclick="router('kyc-face')" class="w-16 h-16 rounded-full border-4 border-white flex items-center justify-center bg-white/20"><div class="w-12 h-12 bg-white rounded-full"></div></button>
+            </div>
+        </div>
+
+        <div id="screen-kyc-face" class="screen hidden-screen flex-1 flex flex-col bg-black fade-in relative">
+            <div class="flex-1 relative flex flex-col items-center justify-center">
+                <p class="absolute top-20 text-white font-bold z-20">Paso 2: Prueba de Vida</p>
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60">
+                <div class="relative z-10 w-64 h-80 border-4 border-green-500 rounded-[50%] flex items-center justify-center shadow-[0_0_0_9999px_rgba(0,0,0,0.9)]">
+                    <p class="text-white text-xs bg-black/50 px-2 rounded mt-32">Sonría a la cámara</p>
+                </div>
+            </div>
+            <div class="h-24 bg-black flex items-center justify-center z-20 pb-6">
+                <button onclick="router('contract')" class="bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg animate-bounce">Confirmar Identidad</button>
+            </div>
+        </div>
+
+        <div id="screen-contract" class="screen hidden-screen flex-1 flex flex-col bg-gray-50 fade-in pt-12">
+            <div class="bg-white px-6 pb-4 border-b border-gray-200 shadow-sm z-10">
+                <div class="flex gap-2 overflow-x-auto no-scrollbar mb-3">
+                    <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=150&q=80" class="w-24 h-24 rounded-lg object-cover border border-gray-200">
+                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=150&q=80" class="w-24 h-24 rounded-lg object-cover border border-gray-200">
+                </div>
+                <h2 class="text-lg font-bold text-gray-900">Depto 2 Dorm - Av. Colón 1234</h2>
+                <p class="text-xs text-gray-500">Inmobiliaria Martinez & Asoc.</p>
+            </div>
+            <div class="bg-yellow-50 border-b border-yellow-200 p-3 flex items-start gap-3 px-6">
+                <i class="fas fa-exclamation-triangle text-yellow-600 text-sm mt-1"></i>
+                <div><p class="text-xs text-yellow-800 font-bold">Validez Condicional</p><p class="text-[10px] text-yellow-700 leading-tight">Este contrato solo será válido una vez firmado por todas las partes.</p></div>
+            </div>
+            <div class="flex-1 px-6 py-4 bg-gray-100 text-xs text-justify font-serif overflow-y-auto leading-relaxed text-gray-700">
+                <h3 class="font-bold text-center mb-4">CONTRATO DE LOCACIÓN</h3>
+                <p class="mb-2"><strong>PRIMERA:</strong> El LOCADOR cede en locación al LOCATARIO...</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p><br><br>
+            </div>
+            <div class="p-4 bg-white border-t border-gray-200">
+                <div class="mb-3 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-blue-50" onclick="this.innerHTML='<span class=\'font-cursive text-xl text-blue-900\'>Firmado Digitalmente</span>'; this.classList.add('border-blue-500')">
+                    <span class="text-gray-400 text-xs"><i class="fas fa-pen"></i> Tocar para firmar</span>
+                </div>
+                <button onclick="router('dashboard-tenant')" class="w-full bg-blue-900 text-white font-bold py-3 rounded-xl shadow-lg">Confirmar Contrato</button>
+            </div>
+        </div>
+
+        <div id="screen-dashboard-tenant" class="screen hidden-screen flex-1 flex flex-col bg-blindato-dark fade-in pt-12">
+            <div class="px-6 pb-2 flex justify-between items-start">
+                <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition" onclick="router('profile')">
+                    <img src="https://i.pravatar.cc/150?img=11" class="w-10 h-10 rounded-full border-2 border-blindato-gold">
+                    <div>
+                        <p class="text-gray-400 text-[10px] uppercase">Hola,</p>
+                        <p class="text-white font-bold text-sm">Roberto M.</p>
+                        <span class="bg-blindato-gold text-black text-[9px] px-1.5 py-0.5 rounded font-bold">SCORE GOLD</span>
+                    </div>
+                </div>
+                <div class="text-right cursor-pointer" onclick="router('market')">
+                    <p class="text-gray-400 text-[10px] uppercase">Puntos</p>
+                    <p class="text-blindato-gold font-bold text-xl">12.500 <i class="fas fa-chevron-right text-[10px]"></i></p>
+                </div>
+            </div>
+
+            <div class="mx-6 mt-6 bg-blindato-card rounded-2xl p-5 border border-gray-700 relative shadow-xl z-10">
+                <div class="flex justify-between items-center mb-4">
+                    <div><h3 class="text-gray-200 font-bold text-sm">Alquiler Febrero</h3><p class="text-gray-500 text-[10px]">$ 500.000</p></div>
+                    <span class="text-blindato-gold text-xs font-bold bg-yellow-400/10 px-2 py-1 rounded">Vence en 2 días</span>
+                </div>
+                <button onclick="router('checkout')" class="w-full bg-blindato-gold hover:bg-yellow-500 text-black font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg transition">
+                    <i class="fas fa-wallet"></i> Pagar Alquiler
+                </button>
+            </div>
+
+            <div class="mx-6 -mt-3 pt-6 bg-gray-900 rounded-b-2xl p-4 border-x border-b border-gray-800 relative z-0">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-shield-alt text-blue-500"></i>
+                        <span class="text-gray-300 text-xs font-bold">Blindaje: 40%</span>
+                    </div>
+                    <span class="text-gray-500 text-[10px]">Saldo insuficiente</span>
+                </div>
+                <div class="w-full bg-gray-700 h-1.5 rounded-full mb-3">
+                    <div class="bg-blue-500 h-1.5 rounded-full" style="width: 40%"></div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <p class="text-[10px] text-gray-400 w-2/3">Misión: Ingresa <strong>$300.000</strong> para blindar tu alquiler y sumar puntos.</p>
+                    <button onclick="router('wallet')" class="bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg">
+                        + Ingresar
+                    </button>
+                </div>
+            </div>
+
+            <div class="px-6 mt-6 grid grid-cols-2 gap-4">
+                <div onclick="router('market')" class="bg-gray-800 p-4 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer border border-gray-700"><i class="fas fa-store text-purple-400 text-2xl"></i><span class="text-gray-300 text-xs font-bold">Boutique</span></div>
+                <div onclick="router('wallet')" class="bg-gray-800 p-4 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer border border-gray-700"><i class="fas fa-wallet text-green-400 text-2xl"></i><span class="text-gray-300 text-xs font-bold">Wallet</span></div>
+            </div>
+            
+            <div class="mt-auto bg-gray-900 h-20 flex justify-around items-center border-t border-gray-800 shrink-0 pb-2">
+                <i class="fas fa-home text-white text-xl"></i>
+                <i onclick="router('wallet')" class="fas fa-wallet text-gray-500 text-xl hover:text-white transition cursor-pointer"></i>
+                <div class="w-12 h-12 bg-blindato-gold rounded-full flex items-center justify-center -mt-8 border-4 border-blindato-dark shadow-lg"><i class="fas fa-qrcode text-black"></i></div>
+                <i onclick="router('market')" class="fas fa-shopping-bag text-gray-500 text-xl hover:text-white transition cursor-pointer"></i>
+                <i onclick="router('profile')" class="fas fa-user text-gray-500 text-xl hover:text-white transition cursor-pointer"></i>
+            </div>
+        </div>
+
+        <div id="screen-checkout" class="screen hidden-screen flex-1 flex flex-col bg-blindato-dark fade-in pt-12">
+            <div class="px-6 pb-2"><button onclick="router('dashboard-tenant')" class="text-gray-400 mb-4"><i class="fas fa-arrow-left"></i> Volver</button><h2 class="text-white text-2xl font-bold">Confirmar Pago</h2></div>
+            <div class="p-6">
+                <div class="bg-gray-800 rounded-xl p-4 mb-6 border border-gray-700 flex justify-between items-center"><span class="text-gray-400 text-xs">Saldo en Wallet</span><span class="text-white font-bold text-lg">$ 200.000</span></div>
+                
+                <label class="text-gray-400 text-xs font-bold uppercase mb-2 block">Monto a Pagar</label>
+                <div class="relative mb-2"><span class="absolute left-4 top-4 text-white font-bold text-xl">$</span><input type="number" id="pay-amount" value="500000" class="w-full bg-white/10 text-white font-bold text-xl rounded-xl p-4 pl-8 border border-gray-600 focus:border-blindato-gold outline-none" oninput="checkAmount()"></div>
+                <p class="text-gray-500 text-xs text-right mb-6">Total Alquiler: $ 500.000</p>
+                
+                <div id="diff-container" class="bg-yellow-900/30 border border-yellow-700 rounded-xl p-4 mb-6">
+                    <div class="flex justify-between text-yellow-500 text-sm font-bold mb-3"><span>Faltan:</span><span id="diff-amount">$ 300.000</span></div>
+                    <button onclick="router('wallet')" class="w-full bg-blindato-gold text-black text-xs font-bold py-3 rounded-lg mb-2 flex items-center justify-center gap-2">
+                        <i class="fas fa-plus-circle"></i> Ingresar Dinero (Recomendado)
+                    </button>
+                    <p class="text-center text-gray-400 text-[10px] mb-2">- O -</p>
+                    <button class="w-full bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-3 rounded-lg border border-gray-500 border-dashed flex items-center justify-center gap-2">
+                        <i class="fas fa-camera"></i> Pagar parcial y subir comprobante
+                    </button>
+                </div>
+
+                <button onclick="router('dashboard-tenant'); alert('Pago Procesado')" class="w-full bg-gray-600 text-gray-400 font-bold py-4 rounded-xl shadow-lg mt-auto cursor-not-allowed">Confirmar Total</button>
+            </div>
+        </div>
+
+        <div id="screen-profile" class="screen hidden-screen flex-1 flex flex-col bg-white fade-in pt-12">
+            <div class="px-6 flex justify-between items-center"><h2 class="text-2xl font-bold text-gray-900">Mi Perfil</h2><button onclick="router('dashboard-tenant')" class="text-gray-400"><i class="fas fa-times text-xl"></i></button></div>
+            <div class="p-6 text-center border-b border-gray-100">
+                <div class="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-3 bg-[url('https://i.pravatar.cc/150?img=11')] bg-cover"></div>
+                <h3 class="font-bold text-lg">Roberto Martinez</h3>
+                <p class="text-gray-500 text-sm">rmartinez.arg@gmail.com</p>
+            </div>
+            <div class="p-6 bg-gray-50">
+                <h4 class="text-xs font-bold text-gray-400 uppercase mb-3">Cambiar Perfil Activo</h4>
+                <div onclick="router('dashboard-tenant')" class="flex items-center gap-3 p-3 bg-white border border-blue-500 rounded-xl cursor-pointer mb-2 shadow-sm">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-700"><i class="fas fa-user"></i></div>
+                    <div class="flex-1"><p class="font-bold text-sm text-blue-900">Inquilino</p><p class="text-xs text-blue-600">Av. Colón 1234, 4B</p></div><i class="fas fa-check-circle text-blue-600"></i>
+                </div>
+            </div>
+            <div class="p-6">
+                 <h4 class="text-xs font-bold text-gray-400 uppercase mb-2">Seguridad</h4>
+                 <button onclick="alert('Flow cambio de clave')" class="w-full flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg mb-2 text-left">
+                    <span class="text-sm font-bold text-gray-700">Cambiar Contraseña</span>
+                    <i class="fas fa-key text-gray-400"></i>
+                </button>
+                <button onclick="router('login')" class="w-full text-red-500 font-bold text-sm py-3 bg-red-50 rounded-xl mt-4">Cerrar Sesión</button>
+            </div>
+        </div>
+
+        <div id="screen-wallet" class="screen hidden-screen flex-1 flex flex-col bg-black fade-in pt-12">
+            <div class="px-6 pb-2 flex justify-between items-center"><button onclick="router('dashboard-tenant')" class="text-white"><i class="fas fa-arrow-left"></i></button><h2 class="text-white font-bold">Mi Billetera</h2><i class="fas fa-cog text-gray-500"></i></div>
+            <div class="px-6 mt-4">
+                <div class="w-full h-48 bg-gradient-to-br from-gray-800 to-black rounded-2xl p-6 border border-gray-700 relative overflow-hidden shadow-2xl">
+                    <div class="flex justify-between items-start mb-8"><i class="fab fa-cc-mastercard text-white text-3xl"></i></div>
+                    <p class="text-white text-2xl font-mono tracking-widest mb-2">•••• 8832</p>
+                    <div class="flex justify-between items-end"><div><p class="text-gray-400 text-[10px] uppercase">Saldo Disponible</p><p class="text-white font-bold text-xl">$ 200.000</p></div></div>
+                </div>
+            </div>
+            <div class="flex justify-around px-6 mt-6"><div class="flex flex-col items-center gap-2"><div class="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center border border-gray-700"><i class="fas fa-arrow-down text-green-400"></i></div><span class="text-gray-500 text-[10px]">Ingresar</span></div></div>
+            <div class="mx-6 mt-8 bg-gray-900 rounded-xl p-4 flex justify-between items-center border border-gray-800"><div class="flex items-center gap-3"><div class="w-8 h-8 bg-blindato-gold rounded-full flex items-center justify-center"><i class="fas fa-lock text-black text-xs"></i></div><div><p class="text-white text-sm font-bold">Blindaje de Alquiler</p></div></div><div class="relative inline-block w-10 mr-2 align-middle select-none"><input type="checkbox" name="toggle" id="toggle" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer"/><label for="toggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-700 cursor-pointer"></label></div></div>
+        </div>
+        
+        <div id="screen-market" class="screen hidden-screen flex-1 flex flex-col bg-blindato-dark fade-in pt-12">
+             <div class="px-6 pb-2"><button onclick="router('dashboard-tenant')" class="text-gray-400 text-xs"><i class="fas fa-arrow-left"></i> Volver</button></div>
+             <div class="px-6 mt-4"><h2 class="text-white text-2xl font-bold">Boutique</h2></div>
+             <div class="px-6 mt-4"><div class="bg-gray-800 p-4 rounded-xl flex gap-4"><div class="w-16 h-16 bg-white rounded flex items-center justify-center"><i class="fas fa-lock text-2xl"></i></div><div><h4 class="text-white font-bold">Cerradura Smart</h4><p class="text-blindato-gold text-xs font-bold">8.000 Pts</p></div></div></div>
+        </div>
+    </div>
+
+    <script>
+        function router(screenId) {
+            document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden-screen'));
+            const target = document.getElementById('screen-' + screenId);
+            if(target) target.classList.remove('hidden-screen');
+        }
+        function toggleAuth(mode) {
+            if(mode === 'login') {
+                document.getElementById('form-login').classList.remove('hidden'); document.getElementById('form-register').classList.add('hidden');
+                document.getElementById('tab-login').classList.add('bg-blindato-gold', 'text-black'); document.getElementById('tab-login').classList.remove('text-gray-400');
+                document.getElementById('tab-register').classList.remove('bg-blindato-gold', 'text-black'); document.getElementById('tab-register').classList.add('text-gray-400');
+            } else {
+                document.getElementById('form-login').classList.add('hidden'); document.getElementById('form-register').classList.remove('hidden');
+                document.getElementById('tab-register').classList.add('bg-blindato-gold', 'text-black'); document.getElementById('tab-register').classList.remove('text-gray-400');
+                document.getElementById('tab-login').classList.remove('bg-blindato-gold', 'text-black'); document.getElementById('tab-login').classList.add('text-gray-400');
+            }
+        }
+        function validateEmail() {
+            const email = document.getElementById('reg-email').value;
+            const check = document.getElementById('email-check');
+            const error = document.getElementById('email-error');
+            if(email.includes('@') && email.includes('.')) { check.classList.remove('hidden'); error.classList.add('hidden'); } else { check.classList.add('hidden'); error.classList.remove('hidden'); }
+        }
+        function checkAmount() {
+            const totalRent = 500000;
+            const inputVal = document.getElementById('pay-amount').value;
+            const diffDisplay = document.getElementById('diff-amount');
+            let diff = totalRent - inputVal;
+            diffDisplay.innerText = "$ " + diff.toLocaleString();
+        }
+        router('login');
+    </script>
+</body>
+</html>

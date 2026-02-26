@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Blindato | v12.0 Instant Pay</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        blindato: {
+                            dark: '#0f172a',
+                            card: '#1e293b',
+                            gold: '#d4af37',
+                            accent: '#3b82f6',
+                            success: '#10b981',
+                            danger: '#ef4444',
+                        }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], cursive: ['Dancing Script', 'cursive'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .hidden-screen { display: none !important; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Animación Confetti */
+        @keyframes pop { 0% { transform: scale(0); opacity: 0; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        .pop-in { animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 h-screen flex flex-col items-center justify-center overflow-hidden">
+
+    <div class="absolute top-4 left-4 z-50 bg-white/95 backdrop-blur p-3 rounded-xl shadow-2xl border border-blue-200 text-xs hidden md:block w-64">
+        <p class="font-bold mb-2 text-blue-900 uppercase border-b pb-1">Simular Escenario:</p>
+        <button onclick="loadScenario('A')" class="w-full text-left px-3 py-2 hover:bg-green-50 rounded mb-1 border-l-4 border-green-500">
+            <span class="font-bold block">Ver. A (Ideal)</span>
+            <span class="text-[10px] text-gray-500">Saldo OK • Pago DIRECTO</span>
+        </button>
+        <button onclick="loadScenario('B')" class="w-full text-left px-3 py-2 hover:bg-yellow-50 rounded mb-1 border-l-4 border-yellow-500">
+            <span class="font-bold block">Ver. B (Híbrido)</span>
+            <span class="text-[10px] text-gray-500">Mix Wallet + Ticket</span>
+        </button>
+        <button onclick="loadScenario('C')" class="w-full text-left px-3 py-2 hover:bg-red-50 rounded mb-1 border-l-4 border-red-500">
+            <span class="font-bold block">Ver. C (Deudor)</span>
+            <span class="text-[10px] text-gray-500">Falta Saldo • Checkout Manual</span>
+        </button>
+        <div class="h-px bg-gray-200 my-2"></div>
+        <button onclick="router('login')" class="block w-full text-center px-2 py-1 bg-gray-100 rounded text-gray-600 font-bold">Reiniciar App</button>
+    </div>
+
+    <div class="relative w-full h-full md:w-[375px] md:h-[812px] bg-blindato-dark md:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col md:border-[8px] md:border-gray-900 ring-1 ring-white/10">
+        
+        <div class="h-12 w-full flex justify-between items-end px-6 pb-2 text-white text-[10px] z-20 absolute top-0 pointer-events-none">
+            <span>10:45</span>
+            <div class="flex gap-1"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-full"></i></div>
+        </div>
+
+        <div id="screen-login" class="screen flex-1 flex flex-col justify-center px-8 bg-blindato-dark fade-in pt-12">
+            <div class="mb-6 text-center">
+                <i class="fas fa-shield-alt text-6xl text-blindato-gold mb-4 animate-pulse"></i>
+                <h1 class="text-3xl font-extrabold text-white tracking-tighter">BLINDATO</h1>
+                <p class="text-gray-400 text-xs mt-2">v12.0 Instant Pay</p>
+            </div>
+            <button onclick="loadScenario('A')" class="w-full bg-white text-blindato-dark font-bold py-3 rounded-xl hover:bg-gray-200 transition mb-4">Ingresar (Demo)</button>
+        </div>
+
+        <div id="screen-dashboard-tenant" class="screen hidden-screen flex-1 flex flex-col bg-blindato-dark fade-in pt-12 relative">
+            
+            <div id="success-overlay" class="hidden absolute inset-0 z-50 bg-blindato-dark/90 flex flex-col items-center justify-center backdrop-blur-sm">
+                <div class="bg-white rounded-full p-6 mb-4 pop-in shadow-[0_0_50px_rgba(16,185,129,0.5)]">
+                    <i class="fas fa-check text-4xl text-green-500"></i>
+                </div>
+                <h2 class="text-white text-2xl font-bold pop-in delay-75">¡Pago Exitoso!</h2>
+                <p class="text-gray-400 text-sm mt-2 pop-in delay-100">Total debitado: $500.000</p>
+                <button onclick="closeSuccessOverlay()" class="mt-8 text-blindato-gold font-bold text-sm underline">Cerrar</button>
+            </div>
+
+            <div class="px-6 pb-2 flex justify-between items-start">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="router('profile')">
+                    <img src="https://i.pravatar.cc/150?img=11" class="w-10 h-10 rounded-full border-2 border-blindato-gold">
+                    <div>
+                        <p class="text-gray-400 text-[10px] uppercase">Hola,</p>
+                        <p class="text-white font-bold text-sm">Roberto M.</p>
+                        <span id="user-score-badge" class="bg-blindato-gold text-black text-[9px] px-1.5 py-0.5 rounded font-bold">SCORE GOLD</span>
+                    </div>
+                </div>
+                <div class="text-right cursor-pointer" onclick="router('market')">
+                    <p class="text-gray-400 text-[10px] uppercase">Puntos</p>
+                    <p class="text-blindato-gold font-bold text-xl">12.500 <i class="fas fa-chevron-right text-[10px]"></i></p>
+                </div>
+            </div>
+
+            <div class="mx-6 mt-4 grid grid-cols-2 gap-3">
+                <div class="bg-gray-800/50 p-3 rounded-xl border border-gray-700">
+                    <p class="text-gray-400 text-[10px] uppercase">Saldo Prepaga</p>
+                    <p id="wallet-balance-display" class="text-white font-bold text-lg text-green-400">$ --</p>
+                </div>
+                <div class="bg-gray-800/50 p-3 rounded-xl border border-gray-700">
+                    <p class="text-gray-400 text-[10px] uppercase">Deuda Total</p>
+                    <p id="total-debt-display" class="text-white font-bold text-lg text-red-400">$ 500k</p>
+                </div>
+            </div>
+
+            <div id="urgent-alert" class="hidden mx-6 mt-3 bg-red-900/20 border border-red-800 rounded-xl p-3 flex items-center justify-between animate-pulse">
+                <div class="flex items-center gap-2"><i class="fas fa-exclamation-circle text-red-500"></i><div><p class="text-red-400 text-xs font-bold">Saldo Crítico</p><p class="text-red-500/70 text-[10px]">Sin fondos ni blindaje.</p></div></div>
+                <button onclick="router('wallet')" class="bg-red-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg hover:bg-red-500">Recargar</button>
+            </div>
+
+            <div class="mx-6 mt-3 bg-blindato-card rounded-2xl p-5 border border-gray-700 relative shadow-xl z-10">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h3 class="text-gray-200 font-bold text-sm">Alquiler Febrero</h3>
+                        <div id="rent-breakdown" class="hidden mt-1">
+                            <p class="text-green-400 text-[10px]"><i class="fas fa-wallet"></i> Pagado: $200k</p>
+                            <p class="text-blue-400 text-[10px]"><i class="fas fa-file-invoice"></i> Ticket: $300k</p>
+                        </div>
+                    </div>
+                    <span id="status-badge" class="text-blindato-gold text-xs font-bold bg-yellow-400/10 px-2 py-1 rounded">Vence en 2 días</span>
+                </div>
+                
+                <button id="main-pay-btn" onclick="handleSmartPay()" class="w-full bg-blindato-gold hover:bg-yellow-500 text-black font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg transition active:scale-95">
+                    <i class="fas fa-wallet"></i> <span id="main-pay-btn-text">Pagar Alquiler</span>
+                </button>
+            </div>
+
+            <div id="blindage-card" class="mx-6 mt-4 p-4 rounded-xl border border-dashed border-green-600/50 bg-green-900/10">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="text-green-400 text-xs font-bold"><i class="fas fa-shield-alt"></i> Blindaje Activo</h4>
+                    <span class="text-green-500 text-[10px]">Marzo / Abril</span>
+                </div>
+                <p class="text-gray-400 text-[10px]">Tus próximos 2 vencimientos están cubiertos por tu saldo.</p>
+            </div>
+
+            <div class="px-6 mt-6 grid grid-cols-2 gap-4">
+                <div onclick="router('tickets')" class="bg-gray-800 p-4 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer border border-gray-700"><i class="fas fa-tools text-blue-400 text-2xl"></i><span class="text-gray-300 text-xs font-bold">Incidencias</span></div>
+                <div onclick="router('wallet')" class="bg-gray-800 p-4 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer border border-gray-700"><i class="fas fa-wallet text-green-400 text-2xl"></i><span class="text-gray-300 text-xs font-bold">Wallet</span></div>
+            </div>
+            
+            <div class="mt-auto bg-gray-900 h-20 flex justify-around items-center border-t border-gray-800 shrink-0 pb-2">
+                <i class="fas fa-home text-white text-xl"></i>
+                <i onclick="router('wallet')" class="fas fa-wallet text-gray-500 text-xl hover:text-white transition cursor-pointer"></i>
+                <div class="w-12 h-12 bg-blindato-gold rounded-full flex items-center justify-center -mt-8 border-4 border-blindato-dark shadow-lg"><i class="fas fa-qrcode text-black"></i></div>
+                <i onclick="router('market')" class="fas fa-shopping-bag text-gray-500 text-xl hover:text-white transition cursor-pointer"></i>
+                <i onclick="router('profile')" class="fas fa-user text-gray-500 text-xl hover:text-white transition cursor-pointer"></i>
+            </div>
+        </div>
+
+        <div id="screen-checkout" class="screen hidden-screen flex-1 flex flex-col bg-blindato-dark fade-in pt-12">
+            <div class="px-6 pb-2"><button onclick="router('dashboard-tenant')" class="text-gray-400 mb-4"><i class="fas fa-arrow-left"></i> Volver</button><h2 class="text-white text-2xl font-bold">Pago Manual</h2></div>
+            <div class="p-6">
+                <div class="bg-gray-800 rounded-xl p-4 mb-6 border border-gray-700 flex justify-between items-center"><span class="text-gray-400 text-xs">Saldo en Wallet</span><span class="text-white font-bold text-lg">$ 50.000</span></div>
+                
+                <p class="text-red-400 text-sm font-bold mb-4 flex items-center gap-2"><i class="fas fa-exclamation-triangle"></i> Saldo insuficiente para pago total.</p>
+                
+                <div class="space-y-4">
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-600 cursor-pointer hover:border-blindato-gold">
+                        <label class="flex items-center gap-3">
+                            <input type="radio" name="payType" class="accent-blindato-gold w-5 h-5">
+                            <div><p class="text-white font-bold text-sm">Pago Parcial</p><p class="text-gray-500 text-[10px]">Pagar $50.000 (Lo disponible).</p></div>
+                        </label>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-600 cursor-pointer hover:border-blindato-gold">
+                        <label class="flex items-center gap-3">
+                            <input type="radio" name="payType" class="accent-blindato-gold w-5 h-5">
+                            <div><p class="text-white font-bold text-sm">Reportar Pago Externo</p><p class="text-gray-500 text-[10px]">Subir comprobante manual.</p></div>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="pt-6 flex gap-3">
+                     <button onclick="router('wallet')" class="flex-1 bg-green-600 text-white font-bold py-3 rounded-xl text-xs">Ingresar Dinero</button>
+                     <button onclick="alert('Operación registrada'); router('dashboard-tenant');" class="flex-1 bg-blindato-gold text-black font-bold py-3 rounded-xl text-xs">Confirmar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="screen-tickets" class="screen hidden-screen flex-1 flex flex-col bg-blindato-dark fade-in pt-12">
+            <div class="px-6 pb-2"><button onclick="router('dashboard-tenant')" class="text-gray-400 mb-4 flex items-center gap-2 text-xs"><i class="fas fa-arrow-left"></i> Volver</button><h2 class="text-white text-2xl font-bold">Incidencias</h2></div>
+            <div class="p-6 pt-0 space-y-4">
+                <div><label class="text-gray-400 text-xs font-bold uppercase block mb-2">Categoría</label><select class="w-full bg-gray-800 text-white rounded-lg p-3 border border-gray-700 text-sm outline-none"><option>Plomería</option><option>Gas</option></select></div>
+                <div class="grid grid-cols-2 gap-3"><div class="border-2 border-dashed border-gray-600 rounded-lg p-4 flex flex-col items-center justify-center text-gray-500"><i class="fas fa-camera text-xl mb-1"></i><span class="text-[10px]">Foto</span></div><div class="border-2 border-dashed border-gray-600 rounded-lg p-4 flex flex-col items-center justify-center text-gray-500"><i class="fas fa-microphone text-xl mb-1"></i><span class="text-[10px]">Audio</span></div></div>
+                <div><label class="text-gray-400 text-xs font-bold uppercase block mb-2">Comprobante (Materiales)</label><div class="bg-gray-800 rounded-lg p-3 flex items-center justify-between border border-gray-700"><span class="text-gray-400 text-xs">Subir ticket de materiales.</span><i class="fas fa-receipt text-blue-400 text-lg"></i></div></div>
+                <button onclick="alert('Enviado')" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg mt-4">Enviar Reporte</button>
+            </div>
+        </div>
+
+        <div id="screen-contract" class="screen hidden-screen flex-1 flex flex-col bg-gray-50 fade-in pt-12">
+            <div class="bg-white px-6 pb-4 border-b border-gray-200 shadow-sm z-10"><h2 class="text-lg font-bold text-gray-900">Contrato: Av. Colón 1234</h2><div class="flex gap-2 mt-2"><span class="bg-green-100 text-green-800 text-[10px] font-bold px-2 py-0.5 rounded border border-green-200"><i class="fas fa-check-circle"></i> ACTIVO</span></div></div>
+            <div class="flex-1 px-6 py-4 bg-gray-100 text-xs text-justify font-serif overflow-y-auto leading-relaxed text-gray-700 relative">
+                <p>En la ciudad de Córdoba... (Texto legal)...</p><br><br>
+                <div class="mt-8 relative w-48 mx-auto transform -rotate-2"><div class="border-b-2 border-blue-900 mb-1"></div><p class="font-cursive text-2xl text-blue-900 text-center">Roberto Martinez</p><p class="text-[8px] text-gray-500 text-center uppercase tracking-widest">Firmado Digitalmente</p></div>
+            </div>
+            <div class="p-4 bg-white border-t border-gray-200"><button onclick="router('dashboard-tenant')" class="w-full bg-gray-200 text-gray-500 font-bold py-3 rounded-xl cursor-default">Documento Firmado</button></div>
+        </div>
+
+        <div id="screen-wallet" class="screen hidden-screen flex-1 flex flex-col bg-black fade-in pt-12">
+            <div class="px-6 pb-2 flex justify-between items-center"><button onclick="router('dashboard-tenant')" class="text-white"><i class="fas fa-arrow-left"></i></button><h2 class="text-white font-bold ml-4">Wallet</h2></div>
+            <div class="px-6 mt-4"><div class="bg-gradient-to-br from-gray-800 to-black rounded-2xl p-6 border border-gray-700 relative overflow-hidden shadow-2xl"><div class="flex justify-between items-start mb-8"><i class="fab fa-cc-mastercard text-white text-3xl"></i></div><p class="text-white text-2xl font-mono tracking-widest mb-2">•••• 8832</p><div class="flex justify-between items-end"><div><p class="text-gray-400 text-[10px] uppercase">Saldo Disponible</p><p id="wallet-balance-card" class="text-white font-bold text-xl">$ --</p></div></div></div></div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentScenario = 'A';
+
+        function router(screenId) {
+            document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden-screen'));
+            document.getElementById('screen-' + screenId).classList.remove('hidden-screen');
+        }
+
+        function loadScenario(type) {
+            currentScenario = type;
+            const balanceDisplay = document.getElementById('wallet-balance-display');
+            const alertBox = document.getElementById('urgent-alert');
+            const blindageCard = document.getElementById('blindage-card');
+            const rentBreakdown = document.getElementById('rent-breakdown');
+            const btnPay = document.getElementById('main-pay-btn');
+            const statusBadge = document.getElementById('status-badge');
+
+            // Reset UI
+            rentBreakdown.classList.add('hidden');
+            alertBox.classList.add('hidden');
+            blindageCard.classList.add('hidden');
+            btnPay.disabled = false;
+            btnPay.innerHTML = '<i class="fas fa-wallet"></i> Pagar Alquiler';
+            btnPay.classList.remove('bg-green-500', 'bg-gray-600');
+            btnPay.classList.add('bg-blindato-gold');
+
+            if (type === 'A') { // IDEAL
+                balanceDisplay.innerText = "$ 1.5 M";
+                balanceDisplay.className = "text-white font-bold text-lg text-green-400";
+                blindageCard.classList.remove('hidden');
+            } 
+            else if (type === 'B') { // HÍBRIDO (Ya pagado parcial)
+                balanceDisplay.innerText = "$ 800k";
+                rentBreakdown.classList.remove('hidden');
+                blindageCard.classList.remove('hidden');
+                statusBadge.innerText = "Parcialmente Pagado";
+                btnPay.innerHTML = '<i class="fas fa-check-circle"></i> Saldo Cubierto';
+                btnPay.disabled = true;
+                btnPay.classList.add('bg-green-500', 'text-white');
+                btnPay.classList.remove('bg-blindato-gold', 'text-black');
+            } 
+            else if (type === 'C') { // DEUDOR
+                balanceDisplay.innerText = "$ 50k";
+                balanceDisplay.className = "text-white font-bold text-lg text-red-500";
+                alertBox.classList.remove('hidden');
+            }
+            router('dashboard-tenant');
+        }
+
+        // SMART PAY LOGIC (INSTANT vs CHECKOUT)
+        function handleSmartPay() {
+            if (currentScenario === 'A') {
+                // INSTANT PAY
+                const btn = document.getElementById('main-pay-btn');
+                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Procesando...';
+                
+                setTimeout(() => {
+                    document.getElementById('success-overlay').classList.remove('hidden');
+                    // Actualizar estado post-pago
+                    btn.innerHTML = '<i class="fas fa-check"></i> Pagado';
+                    btn.disabled = true;
+                    btn.classList.remove('bg-blindato-gold', 'text-black');
+                    btn.classList.add('bg-green-500', 'text-white');
+                    document.getElementById('status-badge').innerText = "Pagado Hoy";
+                    document.getElementById('status-badge').className = "text-green-500 text-xs font-bold bg-green-900/30 px-2 py-1 rounded";
+                }, 1500);
+
+            } else {
+                // GO TO CHECKOUT (Scenario C)
+                router('checkout');
+            }
+        }
+
+        function closeSuccessOverlay() {
+            document.getElementById('success-overlay').classList.add('hidden');
+        }
+
+        loadScenario('A');
+    </script>
+</body>
+</html>

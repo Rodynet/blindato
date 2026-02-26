@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Blindato | Interactive Prototype v4.1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        blindato: {
+                            dark: '#0f172a',
+                            card: '#1e293b',
+                            gold: '#d4af37',
+                            accent: '#3b82f6',
+                            success: '#10b981',
+                            danger: '#ef4444',
+                        }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .hidden-screen { display: none !important; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Simulación de Firma */
+        .signature-pad { background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 h-screen flex flex-col items-center justify-center overflow-hidden">
+
+    <div class="absolute top-4 left-4 z-50 bg-white/90 backdrop-blur p-2 rounded-lg shadow-lg border border-gray-200 text-xs hidden md:block">
+        <p class="font-bold mb-1 text-gray-500 uppercase">Atajos:</p>
+        <button onclick="router('login')" class="block w-full text-left px-2 py-1 hover:bg-gray-100 rounded">🔄 Reiniciar</button>
+    </div>
+
+    <div class="relative w-full h-full md:w-[375px] md:h-[812px] bg-blindato-dark md:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col md:border-[8px] md:border-gray-900 ring-1 ring-white/10">
+        
+        <div class="h-12 w-full flex justify-between items-end px-6 pb-2 text-white text-[10px] z-20 absolute top-0 w-full">
+            <span>10:45</span>
+            <div class="flex gap-1"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-full"></i></div>
+        </div>
+
+        <div id="screen-login" class="screen flex-1 flex flex-col justify-center px-8 bg-blindato-dark fade-in pt-12">
+            <div class="mb-8 text-center">
+                <i class="fas fa-shield-alt text-6xl text-blindato-gold mb-4 animate-pulse"></i>
+                <h1 class="text-3xl font-extrabold text-white tracking-tighter">BLINDATO</h1>
+                <p class="text-gray-400 text-sm mt-2">El Estándar de Alquiler Seguro</p>
+            </div>
+            
+            <div class="space-y-3">
+                <button onclick="router('onboarding-id')" class="w-full bg-blindato-gold text-black font-bold py-4 rounded-xl shadow-lg shadow-yellow-500/20 hover:scale-105 transition flex items-center justify-center gap-3">
+                    <i class="fas fa-user"></i> Soy Inquilino
+                </button>
+
+                <button onclick="router('dashboard-owner')" class="w-full bg-blue-900 text-white font-bold py-4 rounded-xl border border-blue-800 shadow-lg hover:bg-blue-800 transition flex items-center justify-center gap-3">
+                    <i class="fas fa-key"></i> Soy Propietario
+                </button>
+
+                <button onclick="router('dashboard-admin')" class="w-full bg-gray-800 text-gray-300 font-medium py-4 rounded-xl border border-gray-700 hover:bg-gray-700 transition flex items-center justify-center gap-3">
+                    <i class="fas fa-building"></i> Soy Inmobiliaria
+                </button>
+            </div>
+
+            <p class="text-center text-gray-600 text-[10px] mt-8">Versión 4.1 | Build 2026</p>
+        </div>
+
+        <div id="screen-onboarding-id" class="screen hidden-screen flex-1 flex flex-col bg-black fade-in relative">
+            <div class="flex-1 relative flex flex-col items-center justify-center">
+                <img src="https://images.unsplash.com/photo-1544502062-f82884f03df6?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover opacity-50 grayscale" alt="Camera Feed">
+                
+                <div class="relative z-10 w-64 h-40 border-2 border-blindato-gold rounded-lg flex items-center justify-center bg-transparent shadow-[0_0_0_9999px_rgba(0,0,0,0.8)]">
+                    <p class="text-white text-xs font-bold bg-black/50 px-2 py-1 rounded">Encuadre su DNI (Frente)</p>
+                </div>
+                
+                <div id="scan-loading" class="hidden absolute bottom-20 bg-white text-black px-4 py-2 rounded-full font-bold flex items-center gap-2">
+                    <i class="fas fa-circle-notch fa-spin text-blindato-gold"></i> Validando Renaper...
+                </div>
+            </div>
+
+            <div class="h-24 bg-black flex items-center justify-center z-20 pb-6">
+                <button onclick="simularScan()" class="w-16 h-16 rounded-full border-4 border-white flex items-center justify-center bg-white/20 hover:bg-white/40 transition">
+                    <div class="w-12 h-12 bg-white rounded-full"></div>
+                </button>
+            </div>
+            
+            <button onclick="router('login')" class="absolute top-12 left-6 text-white text-sm z-30"><i class="fas fa-times"></i> Cancelar</button>
+        </div>
+
+        <div id="screen-contract" class="screen hidden-screen flex-1 flex flex-col bg-white fade-in pt-12">
+            <div class="px-6 pt-2">
+                <h2 class="text-2xl font-bold text-gray-900 mb-1">Firma de Contrato</h2>
+                <p class="text-sm text-gray-500">Propiedad: Av. Colón 1234, 4B</p>
+            </div>
+
+            <div class="flex-1 px-6 overflow-y-auto mt-4">
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-xs text-gray-600 h-64 overflow-y-scroll mb-4 text-justify leading-relaxed shadow-inner">
+                    <p class="font-bold mb-2">CLÁUSULA DE ARBITRAJE:</p>
+                    <p>Las partes acuerdan someter cualquier disputa derivada de este contrato al Tribunal Arbitral de Blindato, renunciando expresamente a la jurisdicción ordinaria...</p>
+                    <br>
+                    <p class="font-bold mb-2">CLÁUSULA DE MANDATO:</p>
+                    <p>El Inquilino acepta el uso de la plataforma Blindato para la gestión de pagos y notificaciones fehacientes...</p>
+                </div>
+
+                <div class="mb-2">
+                    <label class="text-xs font-bold text-gray-700 uppercase">Su Firma Digital</label>
+                    <div class="signature-pad h-32 border-2 border-dashed border-gray-300 rounded-xl mt-2 flex items-center justify-center text-gray-400 cursor-crosshair hover:border-blue-400 transition select-none" onclick="this.innerHTML='<span class=\'text-blue-900 font-cursive text-4xl transform -rotate-6\'>Roberto M.</span>'; this.classList.add('border-blue-500', 'bg-blue-50'); this.classList.remove('border-gray-300');">
+                        <i class="fas fa-pen mr-2"></i> Toque para firmar
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-gray-100 bg-white">
+                <button onclick="router('dashboard-tenant')" class="w-full bg-blue-900 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-800 transition">
+                    Confirmar y Acceder
+                </button>
+            </div>
+        </div>
+
+        <div id="screen-dashboard-tenant" class="screen hidden-screen flex-1 flex flex-col bg-blindato-dark fade-in pt-12">
+            <div class="px-6 pb-4 flex justify-between items-center">
+                <div>
+                    <p class="text-gray-400 text-xs">Hola, Roberto</p>
+                    <div class="flex items-center gap-2">
+                        <span class="text-white font-bold text-lg">Tu Score</span>
+                        <span class="bg-blindato-gold text-black text-[9px] px-1.5 py-0.5 rounded font-bold">GOLD</span>
+                    </div>
+                </div>
+                <div class="text-right cursor-pointer group" onclick="router('market')">
+                    <p class="text-gray-400 text-[10px] uppercase group-hover:text-white transition">Puntos</p>
+                    <p class="text-blindato-gold font-bold text-xl group-hover:scale-110 transition">12.500 <i class="fas fa-chevron-right text-[10px]"></i></p>
+                </div>
+            </div>
+
+            <div class="mx-4 mt-2 bg-blindato-card rounded-2xl p-5 border border-gray-700 relative shadow-xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-gray-200 font-bold text-sm">Canon Febrero</h3>
+                    <span id="status-badge" class="text-blindato-gold text-xs font-bold bg-yellow-400/10 px-2 py-1 rounded">Vence en 2 días</span>
+                </div>
+
+                <div id="payment-actions" class="space-y-3">
+                    <button onclick="alert('Flujo de pago digital (Integración PSP)')" class="w-full bg-blindato-gold hover:bg-yellow-500 text-black font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg transition transform active:scale-95">
+                        <i class="fas fa-wallet"></i> Pagar con Wallet ($500k)
+                    </button>
+                    <button onclick="router('hybrid-pay')" class="w-full bg-transparent text-gray-300 text-xs font-medium py-3 rounded-xl flex items-center justify-center gap-2 border border-gray-600 border-dashed hover:bg-white/5 hover:text-white transition">
+                        <i class="fas fa-hand-holding-usd"></i> Reportar Pago Efectivo
+                    </button>
+                </div>
+
+                <div id="payment-success" class="hidden text-center py-4 animate-bounce">
+                    <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg shadow-green-500/30">
+                        <i class="fas fa-check text-white text-xl"></i>
+                    </div>
+                    <p class="text-white font-bold">¡Cumplimiento Reportado!</p>
+                    <p class="text-gray-400 text-xs">Pendiente de validación inmobiliaria.</p>
+                </div>
+            </div>
+
+            <div class="px-6 mt-6 flex-1 overflow-y-auto">
+                <h4 class="text-gray-500 text-xs font-bold mb-3 uppercase tracking-wider">Historial</h4>
+                <div class="flex items-center gap-4 mb-4 bg-gray-800/30 p-3 rounded-xl">
+                    <div class="w-10 h-10 rounded-full bg-blindato-success/20 flex items-center justify-center text-blindato-success"><i class="fas fa-check"></i></div>
+                    <div class="flex-1">
+                        <h5 class="text-white text-sm font-medium">Enero 2026</h5>
+                        <p class="text-gray-500 text-xs">Pago Digital</p>
+                    </div>
+                    <span class="text-blindato-gold text-xs font-bold">+50 pts</span>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 h-20 flex justify-around items-center border-t border-gray-800 shrink-0 pb-2">
+                <i class="fas fa-home text-white text-xl"></i>
+                <i class="fas fa-file-contract text-gray-500 text-xl hover:text-white transition"></i>
+                <div class="w-12 h-12 bg-blindato-gold rounded-full flex items-center justify-center -mt-8 border-4 border-blindato-dark shadow-lg shadow-yellow-500/20"><i class="fas fa-qrcode text-black"></i></div>
+                <i onclick="router('market')" class="fas fa-shopping-bag text-gray-500 text-xl hover:text-white transition cursor-pointer"></i>
+                <i onclick="router('login')" class="fas fa-sign-out-alt text-gray-500 text-xl hover:text-red-400 transition"></i>
+            </div>
+        </div>
+
+        <div id="screen-hybrid-pay" class="screen hidden-screen flex-1 flex flex-col bg-blindato-dark fade-in pt-12">
+            <div class="px-6 pb-2">
+                <button onclick="router('dashboard-tenant')" class="text-gray-400 mb-4 hover:text-white transition flex items-center gap-2"><i class="fas fa-arrow-left"></i> Volver</button>
+                <h2 class="text-white text-2xl font-bold">Reportar Efectivo</h2>
+                <p class="text-gray-400 text-xs mt-1">Declara tu pago para mantener el Score.</p>
+            </div>
+
+            <div class="p-6">
+                <div class="bg-gray-800 rounded-xl p-4 mb-4 border border-gray-700">
+                    <label class="text-gray-400 text-xs font-bold uppercase block mb-2">Comprobante (Foto/Recibo)</label>
+                    <div class="h-32 border-2 border-dashed border-gray-600 rounded-lg flex flex-col items-center justify-center text-gray-500 hover:border-blindato-gold hover:text-blindato-gold transition cursor-pointer bg-gray-900/50" onclick="this.innerHTML='<i class=\'fas fa-check-circle text-3xl mb-2 text-green-500\'></i><span class=\'text-white text-xs\'>Comprobante Cargado</span>'; this.classList.add('border-green-500');">
+                        <i class="fas fa-camera text-2xl mb-2"></i>
+                        <span class="text-xs">Tocar para subir foto</span>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-xl p-4 mb-6 border border-gray-700">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-white text-sm font-bold">Fee de Servicio</span>
+                        <span class="text-white text-sm font-bold">$ 15.000</span>
+                    </div>
+                    <p class="text-gray-500 text-[10px] leading-tight">Para procesar la validación y sumar puntos, debes abonar el costo operativo de la plataforma.</p>
+                </div>
+
+                <button onclick="submitHybrid()" class="w-full bg-blindato-gold text-black font-bold py-4 rounded-xl shadow-lg hover:bg-yellow-500 transition">
+                    Pagar Fee y Reportar
+                </button>
+            </div>
+        </div>
+
+        <div id="screen-market" class="screen hidden-screen flex-1 flex flex-col bg-blindato-dark fade-in pt-12">
+            <div class="px-6 pb-2 flex justify-between items-end">
+                <div>
+                     <button onclick="router('dashboard-tenant')" class="text-gray-400 mb-2 hover:text-white transition flex items-center gap-2 text-xs"><i class="fas fa-arrow-left"></i> Volver</button>
+                    <h2 class="text-white text-2xl font-bold">Boutique</h2>
+                </div>
+                <div class="text-right">
+                    <p class="text-gray-400 text-[10px]">Tus Puntos</p>
+                    <p class="text-blindato-gold font-bold">12.500</p>
+                </div>
+            </div>
+
+            <div class="flex-1 px-6 mt-4 overflow-y-auto pb-6">
+                <div class="bg-gradient-to-r from-blue-900 to-blue-800 rounded-2xl p-4 mb-6 relative overflow-hidden border border-blue-700 shadow-lg group">
+                    <div class="relative z-10">
+                        <h3 class="text-white font-bold text-lg">-$50.000 en Alquiler</h3>
+                        <p class="text-blue-200 text-xs mb-3">Canjeá tus puntos por crédito inmediato.</p>
+                        <button class="bg-white text-blue-900 text-xs font-bold px-3 py-1.5 rounded-lg shadow hover:bg-gray-100 transition">Canjear por 10.000 pts</button>
+                    </div>
+                    <i class="fas fa-coins absolute -right-4 -bottom-4 text-8xl text-blue-500/20 group-hover:scale-110 transition duration-500"></i>
+                </div>
+
+                <h3 class="text-gray-400 text-xs font-bold uppercase mb-3">Smart Home & Seguridad</h3>
+                
+                <div class="bg-gray-800 rounded-xl p-3 mb-3 flex gap-4 border border-gray-700 hover:border-gray-500 transition">
+                    <div class="w-20 h-20 bg-white rounded-lg flex items-center justify-center shrink-0">
+                        <i class="fas fa-lock text-3xl text-gray-800"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-white text-sm font-bold">Cerradura Samsung</h4>
+                        <p class="text-gray-500 text-[10px] mb-2">Biométrica + App</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-blindato-gold font-bold text-sm">8.000 Pts</span>
+                            <button class="bg-gray-700 hover:bg-gray-600 text-white text-[10px] px-2 py-1 rounded border border-gray-600 transition">Ver</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="screen-dashboard-admin" class="screen hidden-screen flex-1 flex flex-col bg-gray-50 fade-in text-gray-800 pt-12">
+            <div class="bg-white h-16 border-b border-gray-200 flex justify-between items-center px-6 pt-2 shadow-sm shrink-0">
+                <span class="font-bold text-blue-900 text-lg">BLINDATO <span class="text-gray-400 text-xs font-normal">| Pro</span></span>
+                <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center"><i class="fas fa-user text-gray-500"></i></div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4">
+                <div class="bg-blue-900 text-white p-5 rounded-xl shadow-lg mb-6 relative overflow-hidden">
+                    <p class="text-blue-200 text-[10px] font-bold uppercase">Saldo Custodia</p>
+                    <h3 class="text-3xl font-bold mt-1">$ 14.5 M</h3>
+                    <div class="mt-3 flex gap-2">
+                        <button class="bg-white/20 hover:bg-white/30 text-[10px] font-bold px-3 py-1 rounded backdrop-blur transition">Dispersar</button>
+                        <button class="bg-white/20 hover:bg-white/30 text-[10px] font-bold px-3 py-1 rounded backdrop-blur transition">Ver Gastos</button>
+                    </div>
+                </div>
+
+                <h4 class="font-bold text-gray-700 text-sm mb-3">Solicitudes Pendientes</h4>
+                
+                <div id="admin-pending-item" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm mb-2 hover:shadow-md transition">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h5 class="font-bold text-sm">Roberto M.</h5>
+                            <p class="text-gray-500 text-xs">Depto 4B • Febrero</p>
+                        </div>
+                        <span class="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-1 rounded border border-yellow-200">Híbrido</span>
+                    </div>
+                    <div class="flex gap-2 mt-2">
+                        <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs font-bold py-2 rounded transition">Ver Foto</button>
+                        <button onclick="adminValidate()" class="flex-1 bg-green-100 hover:bg-green-200 text-green-700 text-xs font-bold py-2 rounded transition">✅ Validar</button>
+                    </div>
+                </div>
+
+                <div id="admin-empty-state" class="hidden text-center py-10 text-gray-400">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                         <i class="fas fa-check text-2xl text-green-500"></i>
+                    </div>
+                    <p class="text-xs font-bold text-gray-500">¡Estás al día!</p>
+                    <p class="text-[10px]">No hay pendientes.</p>
+                </div>
+
+            </div>
+            
+            <div class="bg-white border-t border-gray-200 h-16 flex justify-around items-center text-xs font-medium text-gray-500 shrink-0 pb-2">
+                <div class="text-blue-900 flex flex-col items-center cursor-pointer"><i class="fas fa-columns text-lg mb-1"></i>Inicio</div>
+                <div class="flex flex-col items-center cursor-pointer hover:text-blue-900"><i class="fas fa-users text-lg mb-1"></i>Inquilinos</div>
+                <div class="flex flex-col items-center cursor-pointer hover:text-blue-900"><i class="fas fa-key text-lg mb-1"></i>Dueños</div>
+                <div onclick="router('login')" class="flex flex-col items-center cursor-pointer hover:text-red-500"><i class="fas fa-sign-out-alt text-lg mb-1"></i>Salir</div>
+            </div>
+        </div>
+
+        <div id="screen-dashboard-owner" class="screen hidden-screen flex-1 flex flex-col bg-white fade-in pt-12">
+             <div class="bg-blue-900 h-40 rounded-b-[2rem] p-6 pt-4 relative shadow-xl">
+                <h2 class="text-white text-lg font-bold">Mis Activos</h2>
+                <div class="mt-4 flex justify-between items-end">
+                    <div>
+                        <p class="text-blue-200 text-[10px] font-medium uppercase tracking-wider">A Liquidar</p>
+                        <p class="text-white text-3xl font-bold tracking-tight">$ 850.000</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mx-4 -mt-6 bg-white rounded-xl shadow-lg border border-gray-100 p-4 relative z-10">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="bg-gray-100 text-gray-600 text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide">Último Movimiento</span>
+                    <span class="text-red-500 font-bold text-xs">-$ 25.000</span>
+                </div>
+                <p class="text-gray-800 text-sm font-bold">Reparación Canilla</p>
+                <p class="text-gray-400 text-[10px]">Ferretería El Tornillo</p>
+                
+                <div class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-2 mt-2 flex items-center gap-2 cursor-pointer hover:bg-gray-100 transition group">
+                    <div class="w-8 h-8 bg-gray-200 rounded flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:text-blue-600"><i class="fas fa-receipt text-xs"></i></div>
+                    <span class="text-blue-600 text-[10px] font-bold underline decoration-blue-300">Ver Ticket (Auditado)</span>
+                </div>
+            </div>
+
+            <div class="flex-1 px-4 mt-6">
+                <h3 class="text-gray-400 text-xs font-bold uppercase mb-3 tracking-wider">Mis Propiedades</h3>
+                <div class="bg-white border border-gray-100 rounded-xl p-3 shadow-sm flex justify-between items-center">
+                    <div>
+                         <h4 class="font-bold text-gray-800 text-xs">Depto Centro</h4>
+                         <p class="text-[10px] text-gray-400">Av. Colón 1234, 4B</p>
+                    </div>
+                    <span class="text-green-500 text-[10px] font-bold bg-green-50 px-2 py-1 rounded-full"><i class="fas fa-check-circle"></i> Al día</span>
+                </div>
+            </div>
+            
+            <div class="flex-1 flex flex-col justify-end p-6 pb-8">
+                <button onclick="router('login')" class="w-full text-gray-400 text-xs font-bold hover:text-red-500 transition">Cerrar Sesión</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Router Simple
+        function router(screenId) {
+            // Ocultar todas las pantallas
+            document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden-screen'));
+            
+            // Mostrar la deseada
+            const target = document.getElementById('screen-' + screenId);
+            if(target) {
+                target.classList.remove('hidden-screen');
+            }
+        }
+
+        // Simulación de Escaneo de DNI
+        function simularScan() {
+            const loader = document.getElementById('scan-loading');
+            loader.classList.remove('hidden');
+            
+            setTimeout(() => {
+                // Ir a la firma después de 2 segundos
+                router('contract');
+            }, 2000);
+        }
+
+        // Simulación de Envío de Pago Híbrido
+        function submitHybrid() {
+            // Simular carga
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+            
+            setTimeout(() => {
+                // Volver al dashboard y mostrar éxito
+                router('dashboard-tenant');
+                document.getElementById('payment-actions').classList.add('hidden');
+                document.getElementById('payment-success').classList.remove('hidden');
+                
+                // Cambiar el badge
+                const badge = document.getElementById('status-badge');
+                badge.className = "text-orange-500 text-xs font-bold bg-orange-100 px-2 py-1 rounded";
+                badge.innerText = "Pendiente Validación";
+                
+                // Resetear botón para la proxima
+                btn.innerHTML = originalText;
+            }, 1500);
+        }
+
+        // Simulación de Validación Admin
+        function adminValidate() {
+            const item = document.getElementById('admin-pending-item');
+            const empty = document.getElementById('admin-empty-state');
+            
+            item.style.transform = 'translateX(100px)';
+            item.style.opacity = '0';
+            setTimeout(() => {
+                item.style.display = 'none';
+                empty.classList.remove('hidden');
+                
+                // Feedback
+                // alert("Pago validado correctamente. Score del inquilino actualizado.");
+            }, 300);
+        }
+
+        // Iniciar en Login
+        router('login');
+    </script>
+</body>
+</html>

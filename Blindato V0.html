@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust-Rent | Prototipo UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        trustBlack: '#0f172a',
+                        trustGold: '#fbbf24',
+                        trustGreen: '#10b981',
+                        trustRed: '#ef4444',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 font-sans p-4">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+
+        <div class="relative mx-auto border-gray-800 dark:border-gray-800 bg-trustBlack border-[14px] rounded-[2.5rem] h-[800px] w-[370px] shadow-xl overflow-hidden flex flex-col">
+            
+            <div class="h-8 w-full bg-trustBlack flex justify-between items-center px-6 text-white text-xs z-10">
+                <span>14:06</span>
+                <div class="flex gap-1">
+                    <i class="fas fa-signal"></i>
+                    <i class="fas fa-wifi"></i>
+                    <i class="fas fa-battery-full"></i>
+                </div>
+            </div>
+
+            <div class="px-6 pt-4 pb-2 flex justify-between items-center z-10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-trustGold to-yellow-600 p-[2px]">
+                        <img src="https://i.pravatar.cc/150?img=11" class="rounded-full w-full h-full border-2 border-trustBlack">
+                    </div>
+                    <div>
+                        <h2 class="text-white text-sm font-bold">Roberto M.</h2>
+                        <span class="text-trustGold text-xs font-semibold tracking-wide">🏆 GOLD MEMBER</span>
+                    </div>
+                </div>
+                <button class="text-gray-400 hover:text-white"><i class="fas fa-bell text-xl"></i></button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto px-6 pb-20 no-scrollbar">
+                
+                <div class="flex justify-center my-6">
+                    <div class="relative w-32 h-32 rounded-full border-4 border-gray-800 flex items-center justify-center">
+                        <svg class="absolute top-0 left-0 w-full h-full transform -rotate-90">
+                            <circle cx="60" cy="60" r="58" stroke="#fbbf24" stroke-width="4" fill="transparent" stroke-dasharray="365" stroke-dashoffset="40" />
+                        </svg>
+                        <div class="text-center">
+                            <span class="block text-3xl font-bold text-white">890</span>
+                            <span class="text-[10px] text-gray-400 uppercase tracking-widest">Score</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full h-48 rounded-2xl bg-gradient-to-br from-gray-800 to-black border border-gray-700 p-5 flex flex-col justify-between shadow-2xl relative overflow-hidden group">
+                    <div class="absolute -right-10 -top-10 w-40 h-40 bg-trustGold opacity-10 rounded-full blur-2xl group-hover:opacity-20 transition"></div>
+                    
+                    <div class="flex justify-between items-start z-10">
+                        <span class="text-gray-400 text-xs tracking-widest">TRUST RENT BALANCE</span>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" class="h-8 opacity-80">
+                    </div>
+                    
+                    <div class="z-10">
+                        <h1 class="text-3xl text-white font-mono tracking-tighter">$ 850.400</h1>
+                        <p class="text-trustGreen text-xs mt-1 flex items-center gap-1">
+                            <i class="fas fa-arrow-up"></i> +500 Millas este mes
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center z-10">
+                        <span class="text-gray-500 text-sm font-mono">•••• 4589</span>
+                        <button class="bg-white/10 hover:bg-white/20 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-sm transition">
+                            <i class="fas fa-plus mr-1"></i> Cargar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-gray-900 rounded-2xl p-5 border border-gray-800">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-400 text-xs">VENCE EN 5 DÍAS</span>
+                        <span class="text-white font-bold text-sm">Depto Nueva Cba</span>
+                    </div>
+                    <div class="flex justify-between items-end mb-4">
+                        <span class="text-2xl text-white font-bold">$ 420.000</span>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" checked class="accent-trustGold h-4 w-4">
+                            <span class="text-xs text-gray-400">Usar 5k Millas (-$10k)</span>
+                        </div>
+                    </div>
+                    <button class="w-full bg-trustGold hover:bg-yellow-500 text-black font-bold py-3 rounded-xl flex justify-center items-center gap-2 transition transform active:scale-95">
+                        <span>Deslizar para Pagar</span>
+                        <i class="fas fa-chevron-right text-xs"></i><i class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+
+                <div class="mt-6">
+                    <h3 class="text-white text-sm font-bold mb-3">Tus Servicios</h3>
+                    <div class="flex gap-3 overflow-x-auto pb-2">
+                        <div class="min-w-[100px] h-24 bg-gray-800 rounded-xl flex flex-col justify-center items-center gap-2 border border-gray-700 cursor-pointer hover:border-trustGold transition">
+                            <i class="fas fa-bolt text-yellow-300 text-xl"></i>
+                            <span class="text-xs text-gray-300">EPEC</span>
+                            <span class="text-[10px] text-green-400">Al día</span>
+                        </div>
+                        <div class="min-w-[100px] h-24 bg-gray-800 rounded-xl flex flex-col justify-center items-center gap-2 border border-gray-700 cursor-pointer hover:border-trustGold transition">
+                            <i class="fas fa-fire text-orange-400 text-xl"></i>
+                            <span class="text-xs text-gray-300">Ecogas</span>
+                            <span class="text-[10px] text-red-400">$12.500</span>
+                        </div>
+                        <div class="min-w-[100px] h-24 bg-gray-800/50 rounded-xl flex flex-col justify-center items-center gap-2 border border-dashed border-gray-600 text-gray-500 cursor-pointer hover:text-white">
+                            <i class="fas fa-plus text-xl"></i>
+                            <span class="text-xs">Agregar</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="absolute bottom-0 w-full h-20 bg-gray-900 border-t border-gray-800 flex justify-around items-center pb-2 z-20">
+                <button class="flex flex-col items-center gap-1 text-trustGold">
+                    <i class="fas fa-home text-xl"></i>
+                    <span class="text-[10px]">Inicio</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 text-gray-500 hover:text-white transition">
+                    <i class="fas fa-file-contract text-xl"></i>
+                    <span class="text-[10px]">Contrato</span>
+                </button>
+                <div class="w-12 h-12 bg-trustGold rounded-full -mt-8 flex items-center justify-center shadow-lg border-4 border-trustBlack text-black text-xl font-bold cursor-pointer hover:scale-105 transition">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <button class="flex flex-col items-center gap-1 text-gray-500 hover:text-white transition">
+                    <i class="fas fa-wallet text-xl"></i>
+                    <span class="text-[10px]">Pagos</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 text-gray-500 hover:text-white transition">
+                    <i class="fas fa-gem text-xl"></i>
+                    <span class="text-[10px]">Bilt</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="relative mx-auto bg-white rounded-lg shadow-2xl h-[800px] w-full col-span-1 md:col-span-2 overflow-hidden flex flex-col border border-gray-200">
+            
+            <div class="h-16 bg-white border-b border-gray-200 flex justify-between items-center px-6">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold text-xs">TR</div>
+                    <span class="font-bold text-gray-800 tracking-tight">Trust-Rent <span class="text-gray-400 font-normal">| CRM</span></span>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div class="flex gap-4 text-sm font-medium text-gray-500">
+                        <a href="#" class="text-gray-900 border-b-2 border-black pb-5">Tesorería</a>
+                        <a href="#" class="hover:text-black transition">Propiedades</a>
+                        <a href="#" class="hover:text-black transition">Inquilinos</a>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Inmobiliaria Martinez</span>
+                        <img src="https://i.pravatar.cc/150?img=68" class="w-8 h-8 rounded-full border border-gray-300">
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 bg-gray-50 flex-1 overflow-y-auto">
+                
+                <div class="grid grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                        <span class="text-xs text-gray-400 uppercase font-bold">Recaudado Hoy</span>
+                        <h3 class="text-2xl font-bold text-gray-900 mt-1">$ 12.5 M</h3>
+                        <span class="text-xs text-green-500 font-medium">↑ 12% vs ayer</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                        <span class="text-xs text-gray-400 uppercase font-bold">Pendiente (Mora)</span>
+                        <h3 class="text-2xl font-bold text-gray-900 mt-1">$ 2.1 M</h3>
+                        <span class="text-xs text-red-500 font-medium">3 Inquilinos</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                        <span class="text-xs text-gray-400 uppercase font-bold">Honorarios (Tú)</span>
+                        <h3 class="text-2xl font-bold text-gray-900 mt-1">$ 850 K</h3>
+                        <span class="text-xs text-gray-500 font-medium">Disp. inmediata</span>
+                    </div>
+                     <div class="bg-indigo-600 p-4 rounded-xl shadow-sm border border-indigo-700 flex flex-col justify-center items-center cursor-pointer hover:bg-indigo-700 transition group">
+                        <span class="text-white font-bold text-sm group-hover:scale-105 transition">⚡ DISPERSAR TODO</span>
+                        <span class="text-[10px] text-indigo-200 mt-1">A 9 Propietarios</span>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800">Gestión de Saldos - Febrero 2026</h3>
+                        <div class="flex gap-2">
+                             <input type="text" placeholder="Buscar propiedad..." class="bg-gray-50 border border-gray-200 rounded-lg px-3 py-1 text-sm outline-none focus:border-indigo-500">
+                             <button class="text-gray-400 hover:text-gray-600"><i class="fas fa-filter"></i></button>
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+                                <th class="px-6 py-3 font-medium">Propiedad</th>
+                                <th class="px-6 py-3 font-medium">Inquilino</th>
+                                <th class="px-6 py-3 font-medium">Estado Prepaga</th>
+                                <th class="px-6 py-3 font-medium">Split Automático</th>
+                                <th class="px-6 py-3 font-medium text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="px-6 py-4 font-medium text-gray-900">
+                                    Depto 4B <br> <span class="text-xs text-gray-400 font-normal">Av. Colon 500</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-2 h-2 rounded-full bg-green-500"></div> Roberto M.
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">Fondeado ✅</span>
+                                </td>
+                                <td class="px-6 py-4 text-gray-500 text-xs">
+                                    Dueño: $380k<br>Fee: $20k<br>Vos: $20k
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button class="bg-black hover:bg-gray-800 text-white px-3 py-1 rounded-md text-xs font-medium transition">
+                                        Dispersar
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition bg-red-50/30">
+                                <td class="px-6 py-4 font-medium text-gray-900">
+                                    Casa 9 <br> <span class="text-xs text-gray-400 font-normal">Barrio Jardin</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-2 h-2 rounded-full bg-red-500"></div> Lucas G.
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold">Sin Saldo ⏳</span>
+                                </td>
+                                <td class="px-6 py-4 text-gray-500 text-xs">
+                                    -
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button class="border border-red-200 hover:bg-red-50 text-red-600 px-3 py-1 rounded-md text-xs font-medium transition flex items-center gap-1 ml-auto">
+                                        <i class="fab fa-whatsapp"></i> Reclamar
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-8">
+                     <h3 class="font-bold text-gray-800 mb-4">Alta Rápida (Smart Load)</h3>
+                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex gap-6 items-center">
+                        <div class="flex-1">
+                            <label class="block text-xs text-gray-500 font-bold uppercase mb-2">Ubicación (Google API)</label>
+                            <div class="relative">
+                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                <input type="text" value="Av. Colón 500, Córdoba" class="w-full bg-gray-50 border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-black outline-none">
+                            </div>
+                        </div>
+                        <div class="w-px h-12 bg-gray-200"></div>
+                        <div class="flex-1">
+                            <label class="block text-xs text-gray-500 font-bold uppercase mb-2">Propietario (Infoexperto)</label>
+                             <div class="flex gap-2">
+                                <input type="text" placeholder="DNI / CUIT" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-black outline-none">
+                                <button class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 rounded-lg font-bold"><i class="fas fa-magic"></i></button>
+                             </div>
+                        </div>
+                        <div class="flex-none">
+                            <button class="bg-trustGold text-black font-bold px-6 py-2.5 rounded-lg shadow-sm hover:bg-yellow-400 transition">
+                                Crear Ficha
+                            </button>
+                        </div>
+                     </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
